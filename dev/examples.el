@@ -446,7 +446,7 @@ new list."
   (defexamples -union
     (-union '(1 2 3) '(3 4 5))  => '(1 2 3 4 5)
     (-union '(1 2 3 4) '())  => '(1 2 3 4)
-    (-union '(1 1 2 2) '(3 2 1))  => '(1 1 2 2 3))
+    (-union '(1 1 2 2) '(3 2 1))  => '(1 2 3))
 
   (defexamples -difference
     (-difference '() '()) => '()
