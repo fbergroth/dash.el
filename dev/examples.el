@@ -309,7 +309,8 @@ new list."
     (-same-items? '(1 2 3) '(3 2 1)) => t
     (-same-items? '(1 2 3) '(1 2 3 4)) => nil
     (-same-items? '((a . 1) (b . 2)) '((a . 1) (b . 2))) => t
-    (-same-items? '(1 2 3) '(2 3 1)) => t)
+    (-same-items? '(1 2 3) '(2 3 1)) => t
+    (-same-items? '(1 1 2) '(1 2 2)) => nil)
 
   (defexamples -is-prefix?
     (-is-prefix? '(1 2 3) '(1 2 3 4 5)) => t
