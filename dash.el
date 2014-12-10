@@ -1611,6 +1611,13 @@ Alias: `-contains-p'"
 
 (defalias '-contains-p '-contains?)
 
+(defun dash--hash-table-make (size-hint)
+  "Return a hash table pre-allocated to SIZE-HINT associations.
+The test for equality is done with `equal',
+or with `-compare-fn' if that's non-nil."
+  (make-hash-table :test (or -compare-fn 'equal)
+                   :size size-hint))
+
 (defun -same-items? (list list2)
   "Return true if LIST and LIST2 has the same items.
 
@@ -1621,7 +1628,12 @@ Alias: `-same-items-p'"
         (length-b (length list2)))
     (and
      (= length-a length-b)
-     (= length-a (length (-intersection list list2))))))
+     (let ((table (dash--hash-table-make length-a))
+           (valid t))
+       (--each list  (puthash it (1+ (gethash it table 0)) table))
+       (--each list2 (puthash it (1- (gethash it table 0)) table))
+       (maphash (lambda (_ v) (setq valid (and valid (= v 0)))) table)
+       valid))))
 
 (defalias '-same-items-p '-same-items?)
 
