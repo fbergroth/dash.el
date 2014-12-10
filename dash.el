@@ -1572,10 +1572,10 @@ Alias: `-uniq'"
   "Return a new list containing the elements of LIST1 and elements of LIST2 that are not in LIST1.
 The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
-  (let (result)
-    (--each list (!cons it result))
-    (--each list2 (unless (-contains? result it) (!cons it result)))
-    (nreverse result)))
+  (let* ((table (dash--hash-table-make (+ (length list) (length list2))))
+         (half (dash--fill-distinct table list))
+         (full (dash--fill-distinct table list2 half)))
+    (nreverse full)))
 
 (defun -intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.
@@ -1623,6 +1623,16 @@ The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
   (make-hash-table :test (or -compare-fn 'equal)
                    :size size-hint))
+
+(defun dash--hash-table-fill (table list)
+  "Fill TABLE with elements in LIST associated to t."
+  (--each list (puthash it t table)))
+
+(defun dash--hash-table-from-list (list)
+  "Return a hash table representing a set of LIST."
+  (let ((table (dash--hash-table-make (length list))))
+    (dash--hash-table-fill table list)
+    table))
 
 (defun -same-items? (list list2)
   "Return true if LIST and LIST2 has the same items.
