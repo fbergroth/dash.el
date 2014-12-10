@@ -1556,9 +1556,15 @@ The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil.
 
 Alias: `-uniq'"
-  (let (result)
-    (--each list (unless (-contains? result it) (!cons it result)))
-    (nreverse result)))
+  (let ((table (dash--hash-table-make (length list))))
+    (nreverse (dash--fill-distinct table list))))
+
+(defun dash--fill-distinct (table list &optional result)
+  (--each list
+    (unless (gethash it table nil)
+      (!cons it result))
+    (puthash it t table))
+  result)
 
 (defalias '-uniq '-distinct)
 
