@@ -1594,7 +1594,15 @@ or with `-compare-fn' if that's non-nil."
   "Return a new list with only the members of LIST that are not in LIST2.
 The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
-  (--filter (not (-contains? list2 it)) list))
+  (let* ((table (dash--hash-table-from-list list2))
+         (seen (dash--hash-table-make (length list)))
+         (result))
+    (--each list
+      (unless (or (gethash it seen nil)
+                  (gethash it table nil))
+        (puthash it t seen)
+        (!cons it result)))
+    (nreverse result)))
 
 (defvar -compare-fn nil
   "Tests for equality use this function or `equal' if this is nil.
