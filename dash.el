@@ -1581,7 +1581,14 @@ or with `-compare-fn' if that's non-nil."
   "Return a new list containing only the elements that are members of both LIST and LIST2.
 The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
-  (--filter (-contains? list2 it) list))
+  (let* ((table1 (dash--hash-table-from-list list))
+         (table2 (dash--hash-table-from-list list2))
+         (result))
+    (maphash (lambda (k _)
+               (when (gethash k table2 nil)
+                 (!cons k result)))
+             table1)
+    (nreverse result)))
 
 (defun -difference (list list2)
   "Return a new list with only the members of LIST that are not in LIST2.
